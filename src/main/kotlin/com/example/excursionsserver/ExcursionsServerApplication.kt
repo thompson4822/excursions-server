@@ -3,6 +3,8 @@ package com.example.excursionsserver
 import com.example.excursionsserver.models.*
 import com.example.excursionsserver.repositories.ExcursionRepository
 import com.example.excursionsserver.repositories.UserRepository
+import com.example.excursionsserver.services.AuthenticationService
+import com.example.excursionsserver.services.ExcursionService
 import org.springframework.boot.CommandLineRunner
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
@@ -14,11 +16,11 @@ import java.time.LocalDateTime
     org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration::class,
     org.springframework.boot.actuate.autoconfigure.security.servlet.ManagementWebSecurityAutoConfiguration::class
 ])
-class ExcursionsServerApplication(private val userRepository: UserRepository, private val excursionRepository: ExcursionRepository) {
+class ExcursionsServerApplication(private val userService: AuthenticationService, private val excursionService: ExcursionService) {
     @Bean
     fun initialize()= CommandLineRunner {
         //userRepository.deleteAll()
-        if(userRepository.count() == 0L) {
+        if(userService.count() == 0L) {
             println("Adding Users:")
             val defaultUsers = listOf(
                 User(firstName = "Jon", lastName = "Snow", userName = "jsnow", email="jsnow@nightswatch.gov", password = "mormont"),
@@ -31,7 +33,7 @@ class ExcursionsServerApplication(private val userRepository: UserRepository, pr
                 User(firstName = "Dani", lastName = "Targaryen", userName = "dragonrider", email="dragon.rider@ruler.gov", password = "dracarys"),
                 User(firstName = "Pete", lastName = "Baelish", userName = "littlefinger", email="pbaelish@harrenhal.gov", password = "chaosisaladder")
             )
-            defaultUsers.forEach { userRepository.insert(it) }
+            defaultUsers.forEach { userService.addUser(it) }
 
             println("Adding Excursions:")
             val defaultExcursions = listOf<Excursion>(
@@ -85,14 +87,14 @@ class ExcursionsServerApplication(private val userRepository: UserRepository, pr
                 )
 
             )
-            defaultExcursions.forEach { excursionRepository.insert(it) }
+            defaultExcursions.forEach { excursionService.add(it) }
 
         }
         println("Database ready!")
     }
 
     fun findUser(userName: String): User {
-        return userRepository.findByUserName(userName)
+        return userService.findByUserName(userName)
     }
 
 }

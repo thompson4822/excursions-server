@@ -1,11 +1,13 @@
 package com.example.excursionsserver.models
 
+import com.github.slugify.Slugify
 import org.springframework.data.annotation.Id
 import org.springframework.data.mongodb.core.mapping.DBRef
 import org.springframework.data.mongodb.core.mapping.Document
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
+import java.time.temporal.ChronoUnit
 
 data class Address(
     val street: String,
@@ -28,7 +30,8 @@ data class ExcursionComment (
     @DBRef val commenter: User,
     val title: String,
     val body: String,
-    val date: LocalDate
+    val date: LocalDate,
+    val slug: Slug? = null
 )
 
 data class ExcursionPeriod (
@@ -39,6 +42,11 @@ data class ExcursionPeriod (
 data class Tag (
     val name: String,
     val description: String
+)
+
+data class Slug(
+    val timestamp: Long,
+    val text: String
 )
 
 @Document
@@ -53,5 +61,6 @@ data class Excursion(
         val startEnd: ExcursionPeriod,
         @DBRef val attendees: List<User>,
         val comments: List<ExcursionComment> = emptyList(),
-        val tags: List<String> = emptyList()
+        val tags: List<String> = emptyList(),
+        val slug: Slug? = null
 )

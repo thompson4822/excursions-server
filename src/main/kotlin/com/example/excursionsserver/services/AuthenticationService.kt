@@ -19,11 +19,15 @@ class AuthenticationService(private val userRepository: UserRepository) {
         userRepository.findAll()
 
     fun addUser(user: User) {
-        val secure = user.copy(password = passwordEncoder.encode(user.password))
+        //val secure = user.copy(password = passwordEncoder.encode(user.password))
         userRepository.insert(user)
     }
 
     fun userNameTaken(userName: String) =
         userRepository.existsByUserName(userName)
 
+    fun findByUserName(userName: String): User =
+        userRepository.findByUserName(userName)
+
+    fun count() = userRepository.count()
 }

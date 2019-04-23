@@ -6,4 +6,7 @@ import org.springframework.stereotype.Repository
 
 @Repository
 interface ExcursionRepository : MongoRepository<Excursion, String>{
+
+    fun findBySlugTimestampAndSlugText(timestamp: Long, text: String): Excursion
+
 }
